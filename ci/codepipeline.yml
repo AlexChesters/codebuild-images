@@ -1,0 +1,135 @@
+Description: Pipeline for my CodeBuild images
+Resources:
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          -
+            Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+      ManagedPolicyArns:
+        - !ImportValue core-infrastructure-codebuild-base-policy-arn
+
+  PythonCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+        Location: !ImportValue core-infrastructure-build-artifacts-bucket
+        Path: /artifacts/codebuild-images/
+        Packaging: NONE
+        Name: build
+        NamespaceType: BUILD_ID
+      TimeoutInMinutes: 5
+      Description: Builds and deploys my personal website to test
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/nodejs:10.14.1
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          -
+            Name: IMAGE
+            Value: python
+            Type: PLAINTEXT
+      Name: website-build-and-deploy-test
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yml
+
+  CodePipeline:
+      Type: AWS::CodePipeline::Pipeline
+      Properties:
+        ArtifactStore:
+          Type: S3
+          Location: !ImportValue core-infrastructure-build-artifacts-bucket
+        Name: codebuild-images
+        RestartExecutionOnUpdate: true
+        RoleArn: !ImportValue core-infrastructure-codepipeline-base-role-arn
+        Stages:
+          -
+            Name: Source
+            Actions:
+              - ActionTypeId:
+                  Category: Source
+                  Owner: ThirdParty
+                  Version: '1'
+                  Provider: GitHub
+                OutputArtifacts:
+                  - Name: GitHubSource
+                RunOrder: 1
+                Name: Clone-From-GitHub
+                Configuration:
+                  Owner: AlexChesters
+                  Repo: codebuild-images
+                  Branch: master
+                  OAuthToken: '{{resolve:ssm:/Secrets/GitHub-Token:1}}'
+          # -
+          #   Name: Deploy
+          #   Actions:
+              # -
+              #   ActionTypeId:
+              #     Category: Deploy
+              #     Owner: AWS
+              #     Version: '1'
+              #     Provider: CloudFormation
+              #   InputArtifacts:
+              #     - Name: GitHubSource
+              #   RunOrder: 1
+              #   Name: Create-Infrastructure-Change-Set
+              #   Configuration:
+              #     ActionMode: CHANGE_SET_REPLACE
+              #     Capabilities: CAPABILITY_NAMED_IAM
+              #     StackName: website-test
+              #     ChangeSetName: website-change-set-test
+              #     RoleArn: !ImportValue core-infrastructure-codepipeline-cloudformation-role-arn
+              #     TemplatePath: GitHubSource::stacks/infrastructure.yml
+              #     TemplateConfiguration: GitHubSource::stacks/parameters/infrastructure/test.json
+              # -
+              #   ActionTypeId:
+              #     Category: Deploy
+              #     Owner: AWS
+              #     Version: '1'
+              #     Provider: CloudFormation
+              #   RunOrder: 2
+              #   Name: Run-Infrastructure-Change-Set
+              #   Configuration:
+              #     ActionMode: CHANGE_SET_EXECUTE
+              #     Capabilities: CAPABILITY_NAMED_IAM
+              #     StackName: website-test
+              #     ChangeSetName: website-change-set-test
+              #     RoleArn: !ImportValue core-infrastructure-codepipeline-cloudformation-role-arn
+          -
+            Name: Build
+            Actions:
+              -
+                ActionTypeId:
+                  Category: Build
+                  Owner: AWS
+                  Version: '1'
+                  Provider: CodeBuild
+                InputArtifacts:
+                  - Name: GitHubSource
+                OutputArtifacts:
+                  - Name: BuildSource
+                RunOrder: 3
+                Name: Build-Python-Image
+                Configuration:
+                  ProjectName: !Ref 'PythonCodeBuildProject'
+
+  CodePipelineWebhook:
+    Type: AWS::CodePipeline::Webhook
+    Properties:
+      Authentication: GITHUB_HMAC
+      AuthenticationConfiguration:
+        SecretToken: '{{resolve:ssm:/Secrets/GitHub-Webhook-Secret:1}}'
+      Filters:
+        -
+          JsonPath: "$.ref"
+      TargetPipeline: !Ref CodePipeline
+      TargetAction: Clone-From-GitHub
+      TargetPipelineVersion: !GetAtt CodePipeline.Version
+      RegisterWithThirdParty: true
