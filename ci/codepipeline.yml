@@ -78,7 +78,7 @@ Resources:
               InputArtifacts:
                 - Name: GitHubSource
               RunOrder: 1
-              Name: Create-Infrastructure-Change-Set
+              Name: Create-Python27-Change-Set
               Configuration:
                 ActionMode: CHANGE_SET_REPLACE
                 Capabilities: CAPABILITY_NAMED_IAM
@@ -94,7 +94,7 @@ Resources:
                 Version: '1'
                 Provider: CloudFormation
               RunOrder: 2
-              Name: Run-Infrastructure-Change-Set
+              Name: Run-Python27-Change-Set
               Configuration:
                 ActionMode: CHANGE_SET_EXECUTE
                 Capabilities: CAPABILITY_NAMED_IAM
