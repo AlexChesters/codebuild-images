@@ -1,12 +1,9 @@
 version: 0.2
 
 phases:
-  install:
-    commands:
-      - echo "install"
   build:
     commands:
-      - "echo build"
+      - echo "building $IMAGE image"
 artifacts:
   files:
-    - '**/*'
+    - "**/*"
