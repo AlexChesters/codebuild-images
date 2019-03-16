@@ -23,25 +23,37 @@ Resources:
               }
             ]
           }
-      RepositoryPolicyText: >
-        {
-          "Statement": [
-            {
-              "Sid": "CodeBuildAccess",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "codebuild.amazonaws.com"
-                ],
-                "AWS": {
-                  "Fn::ImportValue": "core-infrastructure-codebuild-base-role-arn"
-                }
-              },
-              "Action": [
-                "ecr:GetDownloadUrlForLayer",
-                "ecr:BatchGetImage",
-                "ecr:BatchCheckLayerAvailability"
-              ]
-            }
-          ]
-        }
+      RepositoryPolicyText:
+        Statement:
+          -
+            Sid: CodeBuildAccess
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+              AWS: !ImportValue core-infrastructure-codebuild-base-role-arn
+              Action:
+                - ecr:GetDownloadUrlForLayer
+                - ecr:BatchGetImage
+                - ecr:BatchCheckLayerAvailability
+      # RepositoryPolicyText: >
+      #   {
+      #     "Statement": [
+      #       {
+      #         "Sid": "CodeBuildAccess",
+      #         "Effect": "Allow",
+      #         "Principal": {
+      #           "Service": [
+      #             "codebuild.amazonaws.com"
+      #           ],
+      #           "AWS": {
+      #             "Fn::ImportValue": "core-infrastructure-codebuild-base-role-arn"
+      #           }
+      #         },
+      #         "Action": [
+      #           "ecr:GetDownloadUrlForLayer",
+      #           "ecr:BatchGetImage",
+      #           "ecr:BatchCheckLayerAvailability"
+      #         ]
+      #       }
+      #     ]
+      #   }
