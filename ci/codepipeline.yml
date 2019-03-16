@@ -11,6 +11,15 @@ Resources:
               Service: codebuild.amazonaws.com
       ManagedPolicyArns:
         - !ImportValue core-infrastructure-codebuild-base-policy-arn
+      Policies:
+        -
+          PolicyName: codebuild-images-role
+          PolicyDocument:
+            Statement:
+              -
+                Effect: Allow
+                Action: ecr:*
+                Resource: '*'
 
   Python27CodeBuildProject:
     Type: AWS::CodeBuild::Project
