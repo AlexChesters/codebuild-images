@@ -30,6 +30,10 @@ Resources:
         Type: LINUX_CONTAINER
         EnvironmentVariables:
           -
+            Name: TARGET_IMAGE
+            Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/python27-codebuild-image:latest'
+            Type: PLAINTEXT
+          -
             Name: IMAGE
             Value: python2.7
             Type: PLAINTEXT

@@ -5,6 +5,8 @@ phases:
     commands:
       - cd images/$IMAGE
       - docker build -t codebuild-images/$IMAGE:latest .
+      - docker tag codebuild-images/$IMAGE:latest $TARGET_IMAGE
+      - docker push $TARGET_IMAGE
 artifacts:
   files:
     - "**/*"
