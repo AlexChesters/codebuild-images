@@ -34,7 +34,7 @@ Resources:
             Value: python2.7
             Type: PLAINTEXT
           -
-            Name: Region
+            Name: REGION
             Value: !Ref AWS::Region
             Type: PLAINTEXT
           -
