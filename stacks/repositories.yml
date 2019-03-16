@@ -1,9 +1,15 @@
 Description: Infrastructure for the ECR repositories
+Outputs:
+  PythonRepositoryName:
+    Description: Name of the ECR repository for the Python 2.7 image
+    Value: !Ref PythonRepository
+    Export:
+      Name: !Sub '${AWS::StackName}-python-repository-name'
 Resources:
   PythonRepository:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: python-codebuild-image
+      RepositoryName: python27-codebuild-image
       LifecyclePolicy:
         LifecyclePolicyText: >
           {
@@ -36,25 +42,3 @@ Resources:
               - ecr:GetDownloadUrlForLayer
               - ecr:BatchGetImage
               - ecr:BatchCheckLayerAvailability
-      # RepositoryPolicyText: >
-      #   {
-      #     "Statement": [
-      #       {
-      #         "Sid": "CodeBuildAccess",
-      #         "Effect": "Allow",
-      #         "Principal": {
-      #           "Service": [
-      #             "codebuild.amazonaws.com"
-      #           ],
-      #           "AWS": {
-      #             "Fn::ImportValue": "core-infrastructure-codebuild-base-role-arn"
-      #           }
-      #         },
-      #         "Action": [
-      #           "ecr:GetDownloadUrlForLayer",
-      #           "ecr:BatchGetImage",
-      #           "ecr:BatchCheckLayerAvailability"
-      #         ]
-      #       }
-      #     ]
-      #   }
