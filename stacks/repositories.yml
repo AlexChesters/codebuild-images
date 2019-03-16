@@ -27,14 +27,15 @@ Resources:
         Statement:
           -
             Sid: CodeBuildAccess
+            Effect: Allow
             Principal:
               Service:
                 - codebuild.amazonaws.com
               AWS: !ImportValue core-infrastructure-codebuild-base-role-arn
-              Action:
-                - ecr:GetDownloadUrlForLayer
-                - ecr:BatchGetImage
-                - ecr:BatchCheckLayerAvailability
+            Action:
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+              - ecr:BatchCheckLayerAvailability
       # RepositoryPolicyText: >
       #   {
       #     "Statement": [
