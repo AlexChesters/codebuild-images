@@ -9,5 +9,9 @@ RUN tar xzf Python-2.7.15
 WORKDIR /tmp/Python-2.7.15
 RUN ./configure --enable-optimizations
 RUN make altinstall
+WORKDIR /tmp
 
-RUN python --version
+RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+RUN python get-pip.py
+
+RUN pip install virtualenv awscli cfn-lint
