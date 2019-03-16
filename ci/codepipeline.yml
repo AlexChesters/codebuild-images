@@ -30,12 +30,16 @@ Resources:
         Type: LINUX_CONTAINER
         EnvironmentVariables:
           -
-            Name: TARGET_IMAGE
-            Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/python27-codebuild-image:latest'
-            Type: PLAINTEXT
-          -
             Name: IMAGE
             Value: python2.7
+            Type: PLAINTEXT
+          -
+            Name: Region
+            Value: !Ref AWS::Region
+            Type: PLAINTEXT
+          -
+            Name: TARGET_IMAGE
+            Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/python27-codebuild-image:latest'
             Type: PLAINTEXT
       Name: codebuild-images-python27
       ServiceRole: !GetAtt CodeBuildRole.Arn

@@ -4,6 +4,7 @@ phases:
   build:
     commands:
       - cd images/$IMAGE
+      - $(aws ecr get-login --no-include-email --region $REGION)
       - docker build -t codebuild-images/$IMAGE:latest .
       - docker tag codebuild-images/$IMAGE:latest $TARGET_IMAGE
       - docker push $TARGET_IMAGE
