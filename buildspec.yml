@@ -3,7 +3,8 @@ version: 0.2
 phases:
   build:
     commands:
-      - echo "building $IMAGE image"
+      - cd images/$IMAGE
+      - docker build -t codebuild-images/$IMAGE:latest .
 artifacts:
   files:
     - "**/*"
