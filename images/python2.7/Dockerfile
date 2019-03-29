@@ -1,7 +1,7 @@
 FROM centos:7
 
 RUN yum install -y \
-  gcc make openssl-devel bzip2-devel
+  gcc make openssl-devel bzip2-devel zip
 
 WORKDIR /tmp
 RUN curl "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz" -o Python-2.7.15
