@@ -1,9 +1,9 @@
 Description: Infrastructure for the ECR repositories
 Parameters:
-  BasePolicyArn:
+  BaseRoleArn:
     Type: String
-    Description: IAM Policy ARN of the base CodeBuild policy
-    Default: arn:aws:iam::008356366354:policy/core-infrastructure-CodeBuildBaseManagedPolicy-19Z49JKLYIPMS
+    Description: IAM Role ARN of the base CodeBuild role
+    Default: arn:aws:iam::008356366354:role/core-infrastructure-CodeBuildBaseRole82AEF9B9-157HFH9R4K5CZ
 Outputs:
   PythonRepositoryName:
     Description: Name of the ECR repository for the Python 2.7 image
@@ -42,7 +42,7 @@ Resources:
             Principal:
               Service:
                 - codebuild.amazonaws.com
-              AWS: !Ref BasePolicyArn
+              AWS: !Ref BaseRoleArn
             Action:
               - ecr:GetDownloadUrlForLayer
               - ecr:BatchGetImage
