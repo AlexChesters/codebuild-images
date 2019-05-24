@@ -1,4 +1,13 @@
 Description: Pipeline for my CodeBuild images
+Parameters:
+  BasePolicyArn:
+    Type: String
+    Description: IAM Policy ARN of the base CodeBuild policy
+    Default: arn:aws:iam::008356366354:policy/core-infrastructure-CodeBuildBaseManagedPolicy-19Z49JKLYIPMS
+  CodePipelineCloudFormationRoleArn:
+    Type: String
+    Description: IAM Role ARN to be assumed by CodePipeline to perform CloudFormation actions
+    Default: arn:aws:iam::008356366354:role/core-infrastructure-CodePipelineCloudFormationRole-1MF3TS7NGYGJF
 Resources:
   CodeBuildRole:
     Type: AWS::IAM::Role
@@ -10,7 +19,7 @@ Resources:
             Principal:
               Service: codebuild.amazonaws.com
       ManagedPolicyArns:
-        - !ImportValue core-infrastructure-codebuild-base-policy-arn
+        - !Ref BasePolicyArn
       Policies:
         -
           PolicyName: codebuild-images-role
@@ -101,7 +110,7 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 StackName: codebuild-repositories
                 ChangeSetName: codebuild-repositories-change-set
-                RoleArn: !ImportValue core-infrastructure-codepipeline-cloudformation-role-arn
+                RoleArn: !Ref CodePipelineCloudFormationRoleArn
                 TemplatePath: GitHubSource::stacks/repositories.yml
                 TemplateConfiguration: GitHubSource::stacks/parameters/repositories.json
             -
@@ -117,7 +126,7 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 StackName: codebuild-repositories
                 ChangeSetName: codebuild-repositories-change-set
-                RoleArn: !ImportValue core-infrastructure-codepipeline-cloudformation-role-arn
+                RoleArn: !Ref CodePipelineCloudFormationRoleArn
         - Name: Build-Images
           Actions:
             - ActionTypeId:
