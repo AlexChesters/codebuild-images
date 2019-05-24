@@ -3,7 +3,7 @@ Parameters:
   BaseRoleArn:
     Type: String
     Description: IAM Role ARN of the base CodeBuild role
-    Default: arn:aws:iam::008356366354:role/core-infrastructure-CodeBuildBaseRole82AEF9B9-157HFH9R4K5CZ
+    Default: arn:aws:iam::008356366354:role/core-infrastructure-globa-CodeBuildBaseRole82AEF9B-16WTO0UXBZ619
 Outputs:
   PythonRepositoryName:
     Description: Name of the ECR repository for the Python 2.7 image
