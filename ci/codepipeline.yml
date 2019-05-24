@@ -8,6 +8,14 @@ Parameters:
     Type: String
     Description: IAM Role ARN to be assumed by CodePipeline to perform CloudFormation actions
     Default: arn:aws:iam::008356366354:role/core-infrastructure-CodePipelineCloudFormationRole-1MF3TS7NGYGJF
+  BuildArtifactsBucketName:
+    Type: String
+    Description: S3 Bucket name where build artifacts are stored
+    Default: core-infrastructure-buildartifactsbucket7a483f0a-ebcw345rdebz
+  CodePipelineExecutionRoleArn:
+    Type: String
+    Description: IAM Role ARN to be assumed by CodePipeline when executing
+    Default: arn:aws:iam::008356366354:role/core-infrastructure-CodePipelineBaseRoleB4584365-UTZ6CHIKX5A5
 Resources:
   CodeBuildRole:
     Type: AWS::IAM::Role
@@ -35,7 +43,7 @@ Resources:
     Properties:
       Artifacts:
         Type: CODEPIPELINE
-        Location: !ImportValue core-infrastructure-build-artifacts-bucket
+        Location: !Ref BuildArtifactsBucketName
         Path: /artifacts/codebuild-images/
         Packaging: NONE
         Name: build
@@ -70,10 +78,10 @@ Resources:
     Properties:
       ArtifactStore:
         Type: S3
-        Location: !ImportValue core-infrastructure-build-artifacts-bucket
+        Location: !Ref BuildArtifactsBucketName
       Name: codebuild-images
       RestartExecutionOnUpdate: true
-      RoleArn: !ImportValue core-infrastructure-codepipeline-base-role-arn
+      RoleArn: !Ref CodePipelineExecutionRoleArn
       Stages:
         - Name: Source
           Actions:
