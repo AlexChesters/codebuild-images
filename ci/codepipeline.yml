@@ -179,8 +179,6 @@ Resources:
                 Provider: CodeBuild
               InputArtifacts:
                 - Name: GitHubSource
-              OutputArtifacts:
-                - Name: BuildSource
               RunOrder: 3
               Name: Build-Python27-Image
               Configuration:
@@ -192,8 +190,6 @@ Resources:
                 Provider: CodeBuild
               InputArtifacts:
                 - Name: GitHubSource
-              OutputArtifacts:
-                - Name: BuildSource
               RunOrder: 3
               Name: Build-CentOS7-Image
               Configuration:
