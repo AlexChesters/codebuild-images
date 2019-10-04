@@ -49,7 +49,7 @@ Resources:
         Name: build
         NamespaceType: BUILD_ID
       TimeoutInMinutes: 5
-      Description: Builds and deploys my personal website to test
+      Description: Builds Python 2.7 CodeBuild image
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/docker:18.09.0
@@ -68,6 +68,41 @@ Resources:
             Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/python27-codebuild-image:latest'
             Type: PLAINTEXT
       Name: codebuild-images-python27
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yml
+
+  CentOS7CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+        Location: !Ref BuildArtifactsBucketName
+        Path: /artifacts/codebuild-images/
+        Packaging: NONE
+        Name: build
+        NamespaceType: BUILD_ID
+      TimeoutInMinutes: 5
+      Description: Builds CentOS 7 CodeBuild image
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/docker:18.09.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          -
+            Name: IMAGE
+            Value: centos7
+            Type: PLAINTEXT
+          -
+            Name: REGION
+            Value: !Ref AWS::Region
+            Type: PLAINTEXT
+          -
+            Name: TARGET_IMAGE
+            Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/centos7-codebuild-image:latest'
+            Type: PLAINTEXT
+      Name: codebuild-images-centos7
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Source:
         Type: CODEPIPELINE
@@ -150,6 +185,19 @@ Resources:
               Name: Build-Python27-Image
               Configuration:
                 ProjectName: !Ref "Python27CodeBuildProject"
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: "1"
+                Provider: CodeBuild
+              InputArtifacts:
+                - Name: GitHubSource
+              OutputArtifacts:
+                - Name: BuildSource
+              RunOrder: 3
+              Name: Build-CentOS7-Image
+              Configuration:
+                ProjectName: !Ref "CentOS7CodeBuildProject"
 
   CodePipelineWebhook:
     Type: AWS::CodePipeline::Webhook
