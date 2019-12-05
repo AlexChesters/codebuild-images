@@ -110,7 +110,7 @@ Resources:
         Packaging: NONE
         Name: build
         NamespaceType: BUILD_ID
-      TimeoutInMinutes: 5
+      TimeoutInMinutes: 10
       Description: Builds Amazon Linux 2 CodeBuild image
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
