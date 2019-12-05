@@ -11,7 +11,8 @@ RUN yum install -y \
   sqlite-devel.x86_64 \
   readline-devel.x86_64 \
   bzip2-devel.x86_64 \
-  awscli
+  awscli \
+  jq
 
 RUN git clone https://github.com/aws/aws-elastic-beanstalk-cli-setup.git
 RUN ./aws-elastic-beanstalk-cli-setup/scripts/bundled_installer
