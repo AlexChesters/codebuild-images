@@ -9,7 +9,7 @@ Outputs:
     Description: Name of the ECR repository for the Python 2.7 image
     Value: !Ref PythonRepository
     Export:
-      Name: !Sub '${AWS::StackName}-python-repository-name'
+      Name: !Sub "${AWS::StackName}-python-repository-name"
 Resources:
   PythonRepository:
     Type: AWS::ECR::Repository
@@ -36,8 +36,7 @@ Resources:
           }
       RepositoryPolicyText:
         Statement:
-          -
-            Sid: CodeBuildAccess
+          - Sid: CodeBuildAccess
             Effect: Allow
             Principal:
               Service:
@@ -72,8 +71,42 @@ Resources:
           }
       RepositoryPolicyText:
         Statement:
-          -
-            Sid: CodeBuildAccess
+          - Sid: CodeBuildAccess
+            Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+              AWS: !Ref BaseRoleArn
+            Action:
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+              - ecr:BatchCheckLayerAvailability
+  AmazonLinux2Repository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: amazonlinux2-codebuild-image
+      LifecyclePolicy:
+        LifecyclePolicyText: >
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Expire untagged images after 1 day",
+                "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 7
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
+      RepositoryPolicyText:
+        Statement:
+          - Sid: CodeBuildAccess
             Effect: Allow
             Principal:
               Service:
