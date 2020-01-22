@@ -169,28 +169,14 @@ Resources:
               InputArtifacts:
                 - Name: GitHubSource
               RunOrder: 1
-              Name: Create-Change-Set
+              Name: Update-Stack
               Configuration:
-                ActionMode: CHANGE_SET_REPLACE
+                ActionMode: REPLACE_ON_FAILURE
                 Capabilities: CAPABILITY_NAMED_IAM
                 StackName: codebuild-repositories
-                ChangeSetName: codebuild-repositories-change-set
                 RoleArn: !Ref CodePipelineCloudFormationRoleArn
                 TemplatePath: GitHubSource::stacks/repositories.yml
                 TemplateConfiguration: GitHubSource::stacks/parameters/repositories.json
-            - ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Version: "1"
-                Provider: CloudFormation
-              RunOrder: 2
-              Name: Run-Change-Set
-              Configuration:
-                ActionMode: CHANGE_SET_EXECUTE
-                Capabilities: CAPABILITY_NAMED_IAM
-                StackName: codebuild-repositories
-                ChangeSetName: codebuild-repositories-change-set
-                RoleArn: !Ref CodePipelineCloudFormationRoleArn
         - Name: Build-Images
           Actions:
             - ActionTypeId:
