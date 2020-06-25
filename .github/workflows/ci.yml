@@ -1,0 +1,27 @@
+name: Build images
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  replicate:
+    runs-on: ubuntu-20.04
+
+    # TODO: matrix for build and deploy
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: build python2.7
+        run: |
+          cd images/python2.7
+          docker build -t codebuild-images/python2.7:latest .
+          docker tag codebuild-images/python2.7:latest alexchesters/codebuild-images_python2.7:latest
+      - name: publish python2.7
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: alexchesters/codebuild-images_python2.7
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
