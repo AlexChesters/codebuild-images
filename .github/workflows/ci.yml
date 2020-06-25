@@ -20,7 +20,7 @@ jobs:
       - name: build ${{ matrix.image }}
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: alexchesters/codebuild-images_python2.7
+          name: alexchesters/codebuild-images_${{ matrix.image }}
           workdir: images/${{ matrix.image }}
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
