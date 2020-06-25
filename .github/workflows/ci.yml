@@ -10,14 +10,17 @@ jobs:
   replicate:
     runs-on: ubuntu-20.04
 
-    # TODO: matrix for build and deploy
+    strategy:
+      matrix:
+        image: [amazonlinux2, centos7, python2.7]
+
     steps:
       - name: checkout code
         uses: actions/checkout@v2
-      - name: python2.7
+      - name: build ${{ matrix.image }}
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: alexchesters/codebuild-images_python2.7
-          workdir: images/python2.7
+          workdir: images/${{ matrix.image }}
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
